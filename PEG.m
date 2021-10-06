@@ -18,8 +18,12 @@ function [Out_PEG, npdf]=PEG(x,Adj,m)
 % Ref:
 %
 % Emails: john.fabila@ed.ac.uk / javier.escudero@ed.ac.uk
-%  01-October-2021
+%  05-October-2021
 %
+%%Ref: J.S. Fabila-Carrasco, C. Tan, and J. Escudero, “Permutation Entropy for Graph Signals”, arXiv preprint, 2021  
+%%arXiv:2110.00628 
+%%  
+
 
 %%Default to some input parameters for clarity and to control errors.
 if nargin > 3
@@ -45,11 +49,12 @@ else
     Aux=Adj;
     %Each column of Lap is an average of the j-neighbourhoods
     for j=2:m
-        Lap(:,j)=diag(1./sum(Aux'))*Aux*x';
+        Lap(:,j)=diag(1./sum(Aux,2))*Aux*x';
         Aux=Aux*Adj;
     end
     
-    %%Delete row
+    %%Delete row, only it is used for directed graphs, otherwise, this step
+    %%does not do nothing
     Lap(any(isnan(Lap),2),:) = [];
     N=size(Lap,1);
         
