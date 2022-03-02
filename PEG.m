@@ -1,4 +1,4 @@
-function [Out_PEG, npdf]=PEG(x,Adj,m)
+function [Out_PEG, npdf]=PEG(x,Adj,m,L)
 % This function calculates permutation entropy for graphs (PEG).
 % It works for Adjacency matrix (directed and undirected graphs) and also
 % weighted graphs.
@@ -8,26 +8,28 @@ function [Out_PEG, npdf]=PEG(x,Adj,m)
 % x: graph signal - a vector of size 1 x N (the number of vertices)
 % Adj: square matrix N x N  The elements of the matrix indicate whether pairs of vertices are adjacent or not in the graph.
 % m: embedding dimension
-% N.B., a value of L=1 in the permutation entropy algorithm is assumed
-% here.
+% L: time delay
 %
 % Output:
 % Out_PEG: a scalar value between 0 and 1 giving the Permutation Entropy value of the graph signal.
 % npdf: Normalised probability density function of graph permutation patterns.
 %
-% Ref:
+%Ref: J.S. Fabila-Carrasco, C. Tan, and J. Escudero, “Permutation Entropy for Graph Signals”, arXiv preprint, 2021  
+%arXiv:2110.00628 
 %
 % Emails: john.fabila@ed.ac.uk / javier.escudero@ed.ac.uk
-%  05-October-2021
+%  11-February-2021
 %
-%%Ref: J.S. Fabila-Carrasco, C. Tan, and J. Escudero, “Permutation Entropy for Graph Signals”, arXiv preprint, 2021  
-%%arXiv:2110.00628 
+
 %%  
 
 
 %%Default to some input parameters for clarity and to control errors.
-if nargin > 3
+if nargin > 4
     error('Too many inputs');
+end
+if nargin < 4
+    L = 1;
 end
 if nargin < 3
     m = 2;
@@ -44,13 +46,14 @@ if or(size(Adj,1)~=N, size(Adj,1)~=N )
 else
     % Step 1: Matrix Lap where first column is the signal, and the columns the
     % j-average
-    Lap = zeros(N,m);%Set_Matrix_store
     Lap(:,1)=x';%First Column is the signal
-    Aux=Adj;
+    Aux=eye(N);
+    t=2;
     %Each column of Lap is an average of the j-neighbourhoods
-    for j=2:m
-        Lap(:,j)=diag(1./sum(Aux,2))*Aux*x';
-        Aux=Aux*Adj;
+    for j=L:L:(m-1)*L
+        Aux=Aux*(Adj^(L));
+        Lap(:,t)=sparse(diag(1./sum(Aux,2)))*(Aux*x');
+        t=t+1;
     end
     
     %%Delete row, only it is used for directed graphs, otherwise, this step
