@@ -25,8 +25,8 @@ for r=a1:def:a2
     for i=1:siz-1
        xe(i+1,1) = r*xe(i,1)*(1-xe(i,1));
     end
-    res(j,1)=pec(xe(k:end,1)',in,2);
-    res(j,2)=PEG(xe(k:end,1)',UPath,in,2);
+    res(j,1)=pec(xe(k:end,1)',in,1);
+    res(j,2)=PEG(xe(k:end,1)',UPath,in,1);
 end
 
 
