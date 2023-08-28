@@ -41,7 +41,7 @@ end
 % Initial checks
 N = length(x); % N=number of vertices
 
-if or(size(Adj,1)~=N, size(Adj,1)~=N )
+if or(size(Adj,1)~=N, size(Adj,2)~=N )
     error('not a square matrix');
 else
     % Step 1: Matrix Lap where first column is the signal, and the columns the
